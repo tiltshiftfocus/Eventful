@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    
+    <TextView
+        android:id="@+id/events"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="3dp"
+        android:paddingLeft="8dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed" />
+    
+    <TextView
+        android:id="@+id/date_of_event"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="3dp"
+        android:paddingLeft="8dp"
+        android:textSize="14sp"/>
+    
+    <TextView
+        android:id="@+id/time_from_event"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:textSize="14sp" />
+        
+    
+</LinearLayout>

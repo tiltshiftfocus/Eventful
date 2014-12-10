@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Eventful</string>
+    <string name="version">1.7</string>
+    <!-- string name="event_search">Search for</string-->
+    <string name="add_an_event">Insert event</string>
+    <string name="search_hint">Event name</string>
+    <string name="add_string">Add</string>
+    <string name="search_title">Search</string>
+    <string name="emptyList">Track your events!</string>
+    <string name="settings">Settings</string>
+    <string name="dark_theme">Dark Theme</string>
+    
+    <string name="set_date">Set Date</string>
+    <string name="set_time">Set Time</string>
+    <string name="date_field"><b>Date</b></string>
+    <string name="time_field"><b>Time</b></string>
+    <string name="save">Save</string>
+    <string name="newevent_label">New Event</string>
+    <string name="delete">Delete</string>
+    
+    <string name="about">About</string>
+    <string name="aboutme">By Jerry Lim</string>
+    <string name="myemail">limzming@gmail.com</string>
+    <string name="import_db">Import Database</string>
+    <string name="export_db">Export Database</string>
+    <string name="import_db_success">Database imported successfully.</string>
+    <string name="export_db_success">Database exported successfully. </string>
+    <string name="import_db_none_found">No backup databases have been found.</string>
+    <string name="import_db_really">Are you sure that you want to import the selected database? This will replace all events and will NOT be reversible.</string>
+
+</resources>

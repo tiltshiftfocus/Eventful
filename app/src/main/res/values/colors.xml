@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="toolBarColor">#607d8b</color>
+    <color name="statusBarColor">#37474f</color>
+    <color name="accentColor">#758ECD</color>
+</resources>
