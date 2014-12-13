@@ -9,6 +9,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -16,7 +18,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AboutActivity extends Activity implements AnimationListener {
+public class AboutActivity extends ActionBarActivity implements AnimationListener {
+
+    private Toolbar toolbar;
 	
 	private String PACKAGE_NAME;
 	private Animation animFadeIn;
@@ -27,11 +31,13 @@ public class AboutActivity extends Activity implements AnimationListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		PACKAGE_NAME = this.getPackageName();
         setTheme();
-		ActionBar actionBar = getActionBar();
-	    actionBar.setDisplayHomeAsUpEnabled(true);
 	    
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about_activity);
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		appIcon = (ImageView)findViewById(R.id.imageView1);
 	    animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);

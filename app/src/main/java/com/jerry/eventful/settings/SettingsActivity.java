@@ -6,11 +6,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.jerry.eventful.R;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends ActionBarActivity {
+
+    private Toolbar toolbar;
 
     private String PACKAGE_NAME;
 
@@ -21,7 +25,9 @@ public class SettingsActivity extends Activity {
         super.onCreate(instance);
         setContentView(R.layout.activity_settings);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getFragmentManager().beginTransaction().
                 replace(R.id.settings_layout, new SettingsFragment()).

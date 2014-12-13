@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -17,10 +16,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.format.Time;
 import android.view.Menu;
@@ -29,7 +32,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.jerry.eventful.database.DatabaseHelper;
@@ -39,7 +42,10 @@ import com.jerry.eventful.helper.EventsAdapter;
 import com.jerry.eventful.settings.SettingsActivity;
 import com.melnykov.fab.FloatingActionButton;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
+
+    private Toolbar toolbar;
+    private float mToolbarHeight;
 
     final private int EDIT_EVENT_REQUEST = 0;
     final private int SETTINGS_REQUEST = 1;
@@ -98,8 +104,8 @@ public class MainActivity extends Activity {
     };
 
     @Override
-    public void onContentChanged() {
-        super.onContentChanged();
+    public void onSupportContentChanged() {
+        super.onSupportContentChanged();
 
         View empty = findViewById(R.id.emptyList);
         ListView list = (ListView) findViewById(R.id.eventsList);
@@ -111,7 +117,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         PACKAGE_NAME = this.getPackageName();
 
-        //SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         if (pref.getBoolean("darktheme", false) == true) {
             setTheme(R.style.AppDarkTheme);
@@ -121,7 +126,12 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+        final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
+                new int[] { android.R.attr.actionBarSize });
+        mToolbarHeight = styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
 
         eventDB = new EventfulDB(this);
         eventDB.open();
@@ -138,17 +148,6 @@ public class MainActivity extends Activity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.attachToListView(eventsLV);
-        fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                newEvent();
-            }
-        });
-
-
         adapEvents = new EventsAdapter(eventsList, this);
         eventsLV.setAdapter(adapEvents);
 
@@ -164,40 +163,16 @@ public class MainActivity extends Activity {
         new Thread(null, this.viewEvents, "MagentoBackground").start();
         this.m_ProgressDialog = ProgressDialog.show(this, "Please wait...", "Populating data ...", true);
 
+        // Setup Floating Action Button
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.attachToListView(eventsLV);
+        fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
 
-
-
-		/*eventsLV.setTextFilterEnabled(true);
-        searchBox = (EditText)findViewById(R.id.eventSearch);
-		searchBox.addTextChangedListener(new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-				if(count < before){
-					adapEvents.resetData();
-					filteredList = eventsList;
-				}
-
-				adapEvents.getFilter().filter(s.toString());
-				filteredList = adapEvents.getFilteredList();
-				
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-
-				
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-
-				filteredList = adapEvents.getFilteredList();
-				
-			}
-		});*/
+            @Override
+            public void onClick(View v) {
+                newEvent();
+            }
+        });
 
     }
 
@@ -206,16 +181,17 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_activity_actions, menu);
 
+
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+
+        MenuItem mSearchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -226,25 +202,15 @@ public class MainActivity extends Activity {
                 adapEvents.getFilter().filter(newText.toString());
                 filterText = newText;
                 return false;
-
-                //filterText = newText;
-
             }
         });
-
-
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-        /*case R.id.add_event:
-			//openAddDialog();
-			newEvent();
-			return true;*/
             case R.id.importDB:
                 importDB();
                 return true;
@@ -265,23 +231,6 @@ public class MainActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-	/*private List<Events> getEvents(){
-		ArrayList<Events> data = new ArrayList<Events>();
-		Events ev1 = new Events();
-		ev1.setEvent("Completed this game");
-		ev1.setTimeFromEvent("1 hour ago");
-		data.add(ev1);
-
-		ev1 = new Events();
-		ev1.setEvent("Watched this movie");
-		ev1.setTimeFromEvent("10 hours ago");
-		data.add(ev1);
-
-		return data;
-
-	}*/
 
     @Override
     protected void onStart() {
@@ -331,35 +280,9 @@ public class MainActivity extends Activity {
                 localTime.set(l);
                 eventsList.add(new Eventful(this, i, str, localTime));
                 localCursor.moveToNext();
-            }//while(localCursor.moveToNext());
+            }
         }
     }
-
-	/* Test dialog add event code */
-	/* ******** UNUSED ******** 
-	public void openAddDialog(){
-		final Dialog d = new Dialog(this);
-		d.setContentView(R.layout.newevent_activity);
-		d.setTitle("New event");
-		d.setCancelable(true);
-
-		final EditText edit = (EditText)d.findViewById(R.id.editTextEvent);
-		Button b = (Button)d.findViewById(R.id.button1);
-		b.setOnClickListener(new View.OnClickListener() {
-
-
-			public void onClick(View v) {
-				String eventName = edit.getText().toString();
-				//MainActivity.this.eventsList.add(new Eventful(eventName, "dummy"));
-				MainActivity.this.adapEvents.notifyDataSetChanged();
-				d.dismiss();
-			}
-		});
-
-
-		d.show();
-	}
-	 ************************ */
 
     public void newEvent() {
         Intent i = new Intent(this, EditEventActivity.class);
@@ -368,26 +291,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		/*String str;
-		long l;
-		int i;
-
-		if((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_OK)){
-			str = data.getExtras().getString("eventname");
-			l = data.getExtras().getLong("when");
-			i = data.getExtras().getInt("id");
-			if(!str.isEmpty() && str.length()>0){
-				//MainActivity.this.eventsList.add(new Eventful(str, "dummy"));
-				ContentValues localContentValues2 = new ContentValues();
-		        localContentValues2.put("name", str);
-		        localContentValues2.put("when_db", Long.valueOf(l));
-		        eventDB.addItem(localContentValues2);
-				this.adapEvents.notifyDataSetChanged();
-			}else
-				this.adapEvents.notifyDataSetChanged();
-		}else if((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_CANCELED)){
-			Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
-		}*/
 
         String str;
         long l;
@@ -436,7 +339,6 @@ public class MainActivity extends Activity {
     }
 
     protected boolean onLongListItemClick(View view, int position, long id) {
-        //Eventful localEvent2 = (Eventful)this.filteredList.get(position);
         Eventful localEvent = (Eventful) this.adapEvents.getItem(position);
         Intent localIntent = new Intent(this, EditEventActivity.class);
         localIntent.putExtra("id", localEvent.getId());
@@ -468,7 +370,7 @@ public class MainActivity extends Activity {
                         Editable value = input.getText();
                         String name = value.toString();
                         try {
-                            DatabaseHelper.getInstance(null).exportDatabase(name);
+                            DatabaseHelper.getInstance(MainActivity.this).exportDatabase(name);
                             Toast.makeText(MainActivity.this, R.string.export_db_success, Toast.LENGTH_LONG).show();
                         } catch (IOException e) {
                             Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();

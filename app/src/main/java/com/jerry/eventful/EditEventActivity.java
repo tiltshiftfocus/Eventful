@@ -12,6 +12,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +25,9 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class EditEventActivity extends Activity {
+public class EditEventActivity extends ActionBarActivity {
+
+    private Toolbar toolbar;
 	
 	private String PACKAGE_NAME;
 	
@@ -76,17 +81,18 @@ public class EditEventActivity extends Activity {
 	protected void onCreate(Bundle instance){
 		PACKAGE_NAME = this.getPackageName();
 		
-		SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 		if(pref.getBoolean("darktheme", false)==true){
 			setTheme(R.style.AppDarkTheme);
 		}else
 			setTheme(R.style.AppTheme);
 		
-		ActionBar actionBar = getActionBar();
-	    actionBar.setDisplayHomeAsUpEnabled(true);
-		
 		super.onCreate(instance);
 		setContentView(R.layout.newevent_activity);
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		editText1 = (EditText)findViewById(R.id.editTextEvent);
 
