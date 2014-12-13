@@ -128,10 +128,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
-        final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
-                new int[] { android.R.attr.actionBarSize });
-        mToolbarHeight = styledAttributes.getDimension(0, 0);
-        styledAttributes.recycle();
 
         eventDB = new EventfulDB(this);
         eventDB.open();
