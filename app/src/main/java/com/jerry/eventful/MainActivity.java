@@ -21,6 +21,7 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.format.Time;
 import android.view.Menu;
@@ -32,11 +33,17 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.jerry.eventful.database.DatabaseHelper;
+import com.jerry.eventful.database.Eventful;
+import com.jerry.eventful.database.EventfulDB;
+import com.jerry.eventful.helper.EventsAdapter;
+import com.jerry.eventful.settings.SettingsActivity;
 import com.melnykov.fab.FloatingActionButton;
 
 public class MainActivity extends Activity {
 
-	private int EDIT_EVENT_REQUEST = 0;
+	final private int EDIT_EVENT_REQUEST = 0;
+    final private int SETTINGS_REQUEST = 1;
 	private String PACKAGE_NAME;
 
 	
@@ -110,7 +117,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		PACKAGE_NAME = this.getPackageName();
 		
-		SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+		//SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 		if(pref.getBoolean("darktheme", false)==true){
 			setTheme(R.style.AppDarkTheme);
 		}else
@@ -203,11 +211,6 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main_activity_actions, menu);
-		
-		SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
-		boolean themePref = pref.getBoolean("darktheme", false);
-		
-		menu.findItem(R.id.darkTheme).setChecked(themePref);
 
 		// Associate searchable configuration with the SearchView
 		SearchManager searchManager =
@@ -243,34 +246,13 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
-		Editor edit = pref.edit();
-		
-		
+
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
 		/*case R.id.add_event:
 			//openAddDialog();
 			newEvent();
 			return true;*/
-		/*case R.id.settings:
-			Intent i = new Intent(this,SettingsActivity.class);
-			startActivity(i);*/
-		case R.id.darkTheme:
-			if(item.isChecked()){
-				item.setChecked(false);
-				edit.putBoolean("darktheme", false);
-				edit.commit();
-				setTheme(R.style.AppDarkTheme);
-				this.recreate();
-			}else{
-				item.setChecked(true);
-				edit.putBoolean("darktheme", true);
-				edit.commit();
-				setTheme(R.style.AppTheme);
-				this.recreate();
-			}
-			return true;
         case R.id.importDB:
             importDB();
             return true;
@@ -279,7 +261,10 @@ public class MainActivity extends Activity {
             exportDB();
             return true;
 
-
+        case R.id.settings:
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivityForResult(settingsIntent, SETTINGS_REQUEST);
+            return true;
 
 		case R.id.about:
 			Intent i = new Intent(this, AboutActivity.class);
@@ -306,7 +291,7 @@ public class MainActivity extends Activity {
 
 	}*/
 
-	@Override
+    @Override
 	protected void onStart(){
 		super.onStart();
 		startScreenUpdates();
@@ -454,7 +439,9 @@ public class MainActivity extends Activity {
 
 		}else if((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_CANCELED)){
 			Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
-		}
+		}else if(requestCode == this.SETTINGS_REQUEST){
+            this.recreate();
+        }
 		
 		
 	}

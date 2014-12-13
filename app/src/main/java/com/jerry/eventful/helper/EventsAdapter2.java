@@ -1,7 +1,6 @@
-package com.jerry.eventful;
+package com.jerry.eventful.helper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
+
+import com.jerry.eventful.database.Eventful;
+import com.jerry.eventful.R;
 
 public class EventsAdapter2 extends BaseAdapter {
 	

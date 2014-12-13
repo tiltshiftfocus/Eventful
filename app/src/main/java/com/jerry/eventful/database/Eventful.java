@@ -1,7 +1,9 @@
-package com.jerry.eventful;
+package com.jerry.eventful.database;
 
 import android.content.Context;
 import android.text.format.Time;
+
+import com.jerry.eventful.helper.DateDiff;
 
 public class Eventful {
 	

@@ -1,4 +1,4 @@
-package com.jerry.eventful;
+package com.jerry.eventful.helper;
 
 /**
  * Created by zm on 10/12/2014.

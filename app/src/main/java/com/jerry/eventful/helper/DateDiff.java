@@ -1,10 +1,12 @@
-package com.jerry.eventful;
+package com.jerry.eventful.helper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 
 public class DateDiff{
@@ -144,9 +146,16 @@ public class DateDiff{
 		int mMinute = time2.minute;
 		String past = "Happened on: ";
 		String future = "Happening on: ";
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String customDate = pref.getString("pref_dateformat", "dd/MM/yyyy");
+        String dateFormat1 = customDate + ", " + "HH:mm";
+        String dateFormat2 = customDate + ", " + "hh:mm aa";
 		
-		SimpleDateFormat dateFormat24h = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
-		SimpleDateFormat dateFormat12h = new SimpleDateFormat("dd/MM/yyyy, hh:mm aa");
+		//SimpleDateFormat dateFormat24h = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+        SimpleDateFormat dateFormat24h = new SimpleDateFormat(dateFormat1);
+		SimpleDateFormat dateFormat12h = new SimpleDateFormat(dateFormat2);
 		
 		Date futureEvents = new Date(time1.toMillis(false));
 		Date pastEvents = new Date(time2.toMillis(false));

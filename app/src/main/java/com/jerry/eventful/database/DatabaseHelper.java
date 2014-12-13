@@ -1,9 +1,11 @@
-package com.jerry.eventful;
+package com.jerry.eventful.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.jerry.eventful.helper.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;

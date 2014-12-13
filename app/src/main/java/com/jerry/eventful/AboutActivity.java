@@ -5,28 +5,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class AboutActivity extends Activity implements AnimationListener {
 	
 	private String PACKAGE_NAME;
-	Animation animFadeIn;
-	ImageView appIcon;
+	private Animation animFadeIn;
+	private ImageView appIcon;
+    private TextView mVersion;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		PACKAGE_NAME = this.getPackageName();
-		SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
-		if(pref.getBoolean("darktheme", false)==true){
-			setTheme(R.style.AppDarkTheme);
-		}else{
-			setTheme(R.style.AppTheme);
-		}
+        setTheme();
 		ActionBar actionBar = getActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 	    
@@ -38,12 +38,26 @@ public class AboutActivity extends Activity implements AnimationListener {
 	    animFadeIn.setAnimationListener(this);
 	    appIcon.setVisibility(View.VISIBLE);
 		appIcon.startAnimation(animFadeIn);
-		
-		
-		
+
+        mVersion = (TextView) findViewById(R.id.version);
+        try {
+            String versionNumber = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            mVersion.setText(versionNumber);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 	}
-	
-	public void sendEmail(View v){
+
+    private void setTheme() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        if(pref.getBoolean("darktheme", false)==true){
+            setTheme(R.style.AppDarkTheme);
+        }else{
+            setTheme(R.style.AppTheme);
+        }
+    }
+
+    public void sendEmail(View v){
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("text/html");
 		i.putExtra(Intent.EXTRA_EMAIL, "limzming@gmail.com");
@@ -60,19 +74,16 @@ public class AboutActivity extends Activity implements AnimationListener {
 
 	@Override
 	public void onAnimationStart(Animation animation) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onAnimationEnd(Animation animation) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onAnimationRepeat(Animation animation) {
-		// TODO Auto-generated method stub
 		
 	}
 

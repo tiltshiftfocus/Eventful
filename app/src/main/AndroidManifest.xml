@@ -38,8 +38,14 @@
         </activity>
         
         <activity
-            android:name="com.jerry.eventful.SettingsActivity"
-            android:label="@string/settings"/>
+            android:name=".settings.SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName="com.jerry.eventful.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jerry.eventful.MainActivity"/>
+
+            </activity>
         
         <activity
             android:name="com.jerry.eventful.AboutActivity"
