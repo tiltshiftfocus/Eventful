@@ -21,6 +21,8 @@
     <string name="about">About</string>
     <string name="aboutme">By Jerry Lim</string>
     <string name="myemail">limzming@gmail.com</string>
+
+    <!-- database Strings-->
     <string name="import_db">Import Database</string>
     <string name="export_db">Export Database</string>
     <string name="import_db_success">Database imported successfully.</string>
@@ -28,31 +30,14 @@
     <string name="import_db_none_found">No backup databases have been found.</string>
     <string name="import_db_really">Are you sure that you want to import the selected database? This will replace all events and will NOT be reversible.</string>
 
-    <string-array name="date_formats">
-        <item>13/12/2014</item>
-        <item>Sat, 13/12/2014</item>
-        <item>12/13/2014</item>
-        <item>Sat, 12/13/2014</item>
-
-        <item>13 December, 2014</item>
-        <item>December 13, 2014</item>
-        <item>Sat December 13, 2014</item>
-
-        <item>13 Dec, 2014</item>
-        <item>Dec 13, 2014</item>
-        <item>Sat Dec 13, 2014</item>
-    </string-array>
-
     <string-array name="dateformat_values">
         <item>dd/MM/yyyy</item>
         <item>EEE, dd/MM/yyyy</item>
         <item>MM/dd/yyyy</item>
         <item>EEE, MM/dd/yyyy</item>
-
         <item>dd MMMM, yyyy</item>
         <item>MMMM dd, yyyy</item>
         <item>EEE MMMM dd, yyyy</item>
-
         <item>dd MMM, yyyy</item>
         <item>MMM dd, yyyy</item>
         <item>EEE MMM dd, yyyy</item>

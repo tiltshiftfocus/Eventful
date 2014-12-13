@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,111 +41,106 @@ import com.melnykov.fab.FloatingActionButton;
 
 public class MainActivity extends Activity {
 
-	final private int EDIT_EVENT_REQUEST = 0;
+    final private int EDIT_EVENT_REQUEST = 0;
     final private int SETTINGS_REQUEST = 1;
-	private String PACKAGE_NAME;
+    private String PACKAGE_NAME;
 
-	
-	private String filterText = "";
+    private String filterText = "";
 
-	private EditText searchBox;
-	private ListView eventsLV;
+    private EditText searchBox;
+    private ListView eventsLV;
 
-	private EventsAdapter adapEvents;
-	private List<Eventful> eventsList = null;
-	private EventfulDB eventDB;
+    private EventsAdapter adapEvents;
+    private List<Eventful> eventsList = null;
+    private EventfulDB eventDB;
 
-	private Runnable viewEvents;
-	private Timer timer;
-	final Handler mHandler = new Handler();
+    private Runnable viewEvents;
+    private Timer timer;
+    final Handler mHandler = new Handler();
 
-	final Runnable mRebuildView = new Runnable() {
+    final Runnable mRebuildView = new Runnable() {
 
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			MainActivity.this.initList();
-			adapEvents.setList(eventsList);
-			adapEvents.getFilter().filter(filterText.toString());
-		}
-	};
+        @Override
+        public void run() {
+            MainActivity.this.initList();
+            adapEvents.setList(eventsList);
+            adapEvents.getFilter().filter(filterText.toString());
+        }
+    };
 
-	final Runnable mUpdateView = new Runnable() {
+    final Runnable mUpdateView = new Runnable() {
 
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			MainActivity.this.adapEvents.notifyDataSetChanged();
-		}
-	};
-	
-	private ProgressDialog m_ProgressDialog = null;
-	private Runnable returnRes = new Runnable()
-	{
-		public void run()
-		{
-			Iterator localIterator = null;
-			if (MainActivity.this.eventsList != null){
-				MainActivity.this.adapEvents.notifyDataSetChanged();
-				MainActivity.this.adapEvents.clear();
-				localIterator = MainActivity.this.eventsList.iterator();
-			}
-			while(true){
-				if (!localIterator.hasNext()){
-					MainActivity.this.m_ProgressDialog.dismiss();
-					MainActivity.this.adapEvents.notifyDataSetChanged();
-					return;
-				}
-				Eventful localEvent = (Eventful)localIterator.next();
-				MainActivity.this.adapEvents.add(localEvent);
-			}
-		}
-	};
+        @Override
+        public void run() {
+            MainActivity.this.adapEvents.notifyDataSetChanged();
+        }
+    };
 
-	@Override
-	public void onContentChanged() {
-	    super.onContentChanged();
+    private ProgressDialog m_ProgressDialog = null;
+    private Runnable returnRes = new Runnable() {
+        public void run() {
+            Iterator localIterator = null;
+            if (MainActivity.this.eventsList != null) {
+                MainActivity.this.adapEvents.notifyDataSetChanged();
+                MainActivity.this.adapEvents.clear();
+                localIterator = MainActivity.this.eventsList.iterator();
+            }
+            while (true) {
+                if (!localIterator.hasNext()) {
+                    MainActivity.this.m_ProgressDialog.dismiss();
+                    MainActivity.this.adapEvents.notifyDataSetChanged();
+                    return;
+                }
+                Eventful localEvent = (Eventful) localIterator.next();
+                MainActivity.this.adapEvents.add(localEvent);
+            }
+        }
+    };
 
-	    View empty = findViewById(R.id.emptyList);
-	    ListView list = (ListView) findViewById(R.id.eventsList);
-	    list.setEmptyView(empty);
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
 
-	}
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		PACKAGE_NAME = this.getPackageName();
-		
-		//SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+        View empty = findViewById(R.id.emptyList);
+        ListView list = (ListView) findViewById(R.id.eventsList);
+        list.setEmptyView(empty);
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        PACKAGE_NAME = this.getPackageName();
+
+        //SharedPreferences pref = this.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-		if(pref.getBoolean("darktheme", false)==true){
-			setTheme(R.style.AppDarkTheme);
-		}else
-			setTheme(R.style.AppTheme);
-		
-		
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
+        if (pref.getBoolean("darktheme", false) == true) {
+            setTheme(R.style.AppDarkTheme);
+        } else
+            setTheme(R.style.AppTheme);
 
-		eventDB = new EventfulDB(this);
-		eventDB.open();
-		eventsList = new ArrayList<Eventful>();
 
-		eventsLV = (ListView)findViewById(R.id.eventsList);
-		eventsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				
-				return MainActivity.this.onLongListItemClick(view, position, id);
-			}
-		});
+
+        eventDB = new EventfulDB(this);
+        eventDB.open();
+        eventsList = new ArrayList<Eventful>();
+
+        eventsLV = (ListView) findViewById(R.id.eventsList);
+        eventsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+
+                return MainActivity.this.onLongListItemClick(view, position, id);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.attachToListView(eventsLV);
-        fab.setOnClickListener(new FloatingActionButton.OnClickListener(){
+        fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -154,32 +148,32 @@ public class MainActivity extends Activity {
             }
         });
 
-		
-		adapEvents = new EventsAdapter(eventsList,this);
-		eventsLV.setAdapter(adapEvents);
 
-		this.viewEvents = new Runnable() {
+        adapEvents = new EventsAdapter(eventsList, this);
+        eventsLV.setAdapter(adapEvents);
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				MainActivity.this.initList();
+        this.viewEvents = new Runnable() {
 
-			}
-		};
-		new Thread(null, this.viewEvents, "MagentoBackground").start();
-		this.m_ProgressDialog = ProgressDialog.show(this, "Please wait...", "Populating data ...", true);
+            @Override
+            public void run() {
+
+                MainActivity.this.initList();
+
+            }
+        };
+        new Thread(null, this.viewEvents, "MagentoBackground").start();
+        this.m_ProgressDialog = ProgressDialog.show(this, "Please wait...", "Populating data ...", true);
 
 
 
 
 		/*eventsLV.setTextFilterEnabled(true);
-		searchBox = (EditText)findViewById(R.id.eventSearch);	
+        searchBox = (EditText)findViewById(R.id.eventSearch);
 		searchBox.addTextChangedListener(new TextWatcher() {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
+
 				if(count < before){
 					adapEvents.resetData();
 					filteredList = eventsList;
@@ -193,86 +187,84 @@ public class MainActivity extends Activity {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
+
 				
 			}
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
+
 				filteredList = adapEvents.getFilteredList();
 				
 			}
 		});*/
 
-	}
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main_activity_actions, menu);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_activity_actions, menu);
 
-		// Associate searchable configuration with the SearchView
-		SearchManager searchManager =
-				(SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView =
-				(SearchView) menu.findItem(R.id.search).getActionView();
-		searchView.setSearchableInfo(
-				searchManager.getSearchableInfo(getComponentName()));
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
 
-		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				// TODO Auto-generated method stub
-				return false;
-			}
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-			@Override
-			public boolean onQueryTextChange(String newText) {
-				// TODO Auto-generated method stub
-				adapEvents.getFilter().filter(newText.toString());
-				filterText = newText;
-				return false;
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapEvents.getFilter().filter(newText.toString());
+                filterText = newText;
+                return false;
 
-				//filterText = newText;
-				
-			}
-		});
+                //filterText = newText;
+
+            }
+        });
 
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-		/*case R.id.add_event:
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+        /*case R.id.add_event:
 			//openAddDialog();
 			newEvent();
 			return true;*/
-        case R.id.importDB:
-            importDB();
-            return true;
+            case R.id.importDB:
+                importDB();
+                return true;
 
-        case R.id.exportDB:
-            exportDB();
-            return true;
+            case R.id.exportDB:
+                exportDB();
+                return true;
 
-        case R.id.settings:
-            Intent settingsIntent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(settingsIntent, SETTINGS_REQUEST);
-            return true;
+            case R.id.settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivityForResult(settingsIntent, SETTINGS_REQUEST);
+                return true;
 
-		case R.id.about:
-			Intent i = new Intent(this, AboutActivity.class);
-			startActivity(i);
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+            case R.id.about:
+                Intent i = new Intent(this, AboutActivity.class);
+                startActivity(i);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
 	/*private List<Events> getEvents(){
@@ -292,57 +284,56 @@ public class MainActivity extends Activity {
 	}*/
 
     @Override
-	protected void onStart(){
-		super.onStart();
-		startScreenUpdates();
-	}
+    protected void onStart() {
+        super.onStart();
+        startScreenUpdates();
+    }
 
-	@Override
-	protected void onStop(){
-		super.onStop();
-		stopScreenUpdates();
-	}
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopScreenUpdates();
+    }
 
-	private void startScreenUpdates(){
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
+    private void startScreenUpdates() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				MainActivity.this.mHandler.post(MainActivity.this.mUpdateView);
-			}
-		},0L,1000);
-	}
+            @Override
+            public void run() {
+                MainActivity.this.mHandler.post(MainActivity.this.mUpdateView);
+            }
+        }, 0L, 1000);
+    }
 
-	private void stopScreenUpdates() {
-		if (timer != null) {
-			timer.cancel();
-		}
-	}
+    private void stopScreenUpdates() {
+        if (timer != null) {
+            timer.cancel();
+        }
+    }
 
-	private void initList(){
+    private void initList() {
 
-		eventsList = new ArrayList<Eventful>();
-		Cursor localCursor = eventDB.all();
-		if(localCursor.getCount()>=0){
-			localCursor.moveToFirst();
-			for(;;){
-				if(localCursor.isAfterLast()){
-					localCursor.close();
-					runOnUiThread(returnRes);
-					return;
-				}
-				int i = localCursor.getInt(0);
-				String str = localCursor.getString(1);
-				long l = localCursor.getLong(2);
-				Time localTime = new Time();
-				localTime.set(l);
-				eventsList.add(new Eventful(this, i,str,localTime));
-				localCursor.moveToNext();
-			}//while(localCursor.moveToNext());
-		}
-	}
+        eventsList = new ArrayList<Eventful>();
+        Cursor localCursor = eventDB.all();
+        if (localCursor.getCount() >= 0) {
+            localCursor.moveToFirst();
+            for (; ; ) {
+                if (localCursor.isAfterLast()) {
+                    localCursor.close();
+                    runOnUiThread(returnRes);
+                    return;
+                }
+                int i = localCursor.getInt(0);
+                String str = localCursor.getString(1);
+                long l = localCursor.getLong(2);
+                Time localTime = new Time();
+                localTime.set(l);
+                eventsList.add(new Eventful(this, i, str, localTime));
+                localCursor.moveToNext();
+            }//while(localCursor.moveToNext());
+        }
+    }
 
 	/* Test dialog add event code */
 	/* ******** UNUSED ******** 
@@ -358,7 +349,6 @@ public class MainActivity extends Activity {
 
 
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				String eventName = edit.getText().toString();
 				//MainActivity.this.eventsList.add(new Eventful(eventName, "dummy"));
 				MainActivity.this.adapEvents.notifyDataSetChanged();
@@ -371,13 +361,13 @@ public class MainActivity extends Activity {
 	}
 	 ************************ */
 
-	public void newEvent(){
-		Intent i = new Intent(this,EditEventActivity.class);
-		startActivityForResult(i, EDIT_EVENT_REQUEST);
-	}
+    public void newEvent() {
+        Intent i = new Intent(this, EditEventActivity.class);
+        startActivityForResult(i, EDIT_EVENT_REQUEST);
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		/*String str;
 		long l;
 		int i;
@@ -398,69 +388,70 @@ public class MainActivity extends Activity {
 		}else if((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_CANCELED)){
 			Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
 		}*/
-		
-		String str;
-		long l;
-		int i;
-		
-		if((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_OK)){
-			str = data.getStringExtra("eventname");
-			l = data.getLongExtra("when", 0L);
-			i = data.getIntExtra("id", -1);
-			
-			if(!data.getBooleanExtra("delete",false)){
-				while(true){
-					mHandler.post(mRebuildView);
-					if(i>=0){
-						if (data.getBooleanExtra("delete",false)) {
-							this.eventDB.deleteItem(i);
-						}
-						ContentValues localContentValues = new ContentValues();
-						localContentValues.put("name", str);
-						localContentValues.put("when_db", Long.valueOf(l));
-						this.eventDB.updateItem(localContentValues, i);
-					}else if(!str.isEmpty() && str.length()>0){
-						ContentValues localContentValues2 = new ContentValues();
-						localContentValues2.put("name", str);
-						localContentValues2.put("when_db", Long.valueOf(l));
-						this.eventDB.addItem(localContentValues2);
-					}
-					
-					return;
-				}
-				
-			}else{
-				this.eventDB.deleteItem(i);
-				mHandler.post(mRebuildView);
 
-			}
+        String str;
+        long l;
+        int i;
 
-			
+        if ((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_OK)) {
+            str = data.getStringExtra("eventname");
+            l = data.getLongExtra("when", 0L);
+            i = data.getIntExtra("id", -1);
 
-		}else if((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_CANCELED)){
-			Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
-		}else if(requestCode == this.SETTINGS_REQUEST){
+            if (!data.getBooleanExtra("delete", false)) {
+                while (true) {
+                    mHandler.post(mRebuildView);
+                    if (i >= 0) {
+                        if (data.getBooleanExtra("delete", false)) {
+                            this.eventDB.deleteItem(i);
+                        }
+                        ContentValues localContentValues = new ContentValues();
+                        localContentValues.put("name", str);
+                        localContentValues.put("when_db", Long.valueOf(l));
+                        this.eventDB.updateItem(localContentValues, i);
+                    } else if (!str.isEmpty() && str.length() > 0) {
+                        ContentValues localContentValues2 = new ContentValues();
+                        localContentValues2.put("name", str);
+                        localContentValues2.put("when_db", Long.valueOf(l));
+                        this.eventDB.addItem(localContentValues2);
+                    }
+
+                    return;
+                }
+
+            } else {
+                this.eventDB.deleteItem(i);
+                mHandler.post(mRebuildView);
+
+            }
+
+
+        } else if ((requestCode == this.EDIT_EVENT_REQUEST) && (resultCode == RESULT_CANCELED)) {
+            Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == this.SETTINGS_REQUEST) {
             this.recreate();
         }
-		
-		
-	}
 
-	protected boolean onLongListItemClick(View view, int position, long id){
-		//Eventful localEvent2 = (Eventful)this.filteredList.get(position);
-		Eventful localEvent = (Eventful)this.adapEvents.getItem(position);
-		Intent localIntent = new Intent(this, EditEventActivity.class);
-		localIntent.putExtra("id", localEvent.getId());
-		localIntent.putExtra("eventname", localEvent.getEvent());
-		localIntent.putExtra("when", localEvent.getWhenMillis());
-		
-		localIntent.putExtra("editTitle",true);
-		
-		startActivityForResult(localIntent, this.EDIT_EVENT_REQUEST);
-		return true;
-	}
+
+    }
+
+    protected boolean onLongListItemClick(View view, int position, long id) {
+        //Eventful localEvent2 = (Eventful)this.filteredList.get(position);
+        Eventful localEvent = (Eventful) this.adapEvents.getItem(position);
+        Intent localIntent = new Intent(this, EditEventActivity.class);
+        localIntent.putExtra("id", localEvent.getId());
+        localIntent.putExtra("eventname", localEvent.getEvent());
+        localIntent.putExtra("when", localEvent.getWhenMillis());
+
+        localIntent.putExtra("editTitle", true);
+
+        startActivityForResult(localIntent, this.EDIT_EVENT_REQUEST);
+        return true;
+    }
 
     public void exportDB() {
+
+
         final EditText input = new EditText(this);
         Calendar today = Calendar.getInstance();
 
@@ -477,7 +468,7 @@ public class MainActivity extends Activity {
                         Editable value = input.getText();
                         String name = value.toString();
                         try {
-                            DatabaseHelper.getInstance(MainActivity.this).exportDatabase(name);
+                            DatabaseHelper.getInstance(null).exportDatabase(name);
                             Toast.makeText(MainActivity.this, R.string.export_db_success, Toast.LENGTH_LONG).show();
                         } catch (IOException e) {
                             Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
@@ -488,6 +479,7 @@ public class MainActivity extends Activity {
                 // Do nothing.
             }
         }).show();
+
     }
 
     public void importDB() {
@@ -500,8 +492,7 @@ public class MainActivity extends Activity {
                         }
                     })
                     .show();
-        }
-        else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.import_db);
 

@@ -26,8 +26,6 @@ public class SettingsActivity extends Activity {
         getFragmentManager().beginTransaction().
                 replace(R.id.settings_layout, new SettingsFragment()).
                 commit();
-
-
     }
 
     private void setTheme() {
