@@ -29,8 +29,6 @@ public class EditEventActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
 	
-	private String PACKAGE_NAME;
-	
 	private Intent resultData = new Intent();
 	private int id;
 	
@@ -79,7 +77,6 @@ public class EditEventActivity extends ActionBarActivity {
 	
 	@Override
 	protected void onCreate(Bundle instance){
-		PACKAGE_NAME = this.getPackageName();
 		
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 		if(pref.getBoolean("darktheme", false)==true){

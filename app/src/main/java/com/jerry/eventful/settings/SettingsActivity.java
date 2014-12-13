@@ -16,11 +16,8 @@ public class SettingsActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
 
-    private String PACKAGE_NAME;
-
     @Override
     protected void onCreate(Bundle instance) {
-        PACKAGE_NAME = this.getPackageName();
         setTheme();
         super.onCreate(instance);
         setContentView(R.layout.activity_settings);

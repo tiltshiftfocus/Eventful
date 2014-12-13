@@ -21,17 +21,14 @@ import android.widget.TextView;
 public class AboutActivity extends ActionBarActivity implements AnimationListener {
 
     private Toolbar toolbar;
-	
-	private String PACKAGE_NAME;
+
 	private Animation animFadeIn;
 	private ImageView appIcon;
     private TextView mVersion;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		PACKAGE_NAME = this.getPackageName();
         setTheme();
-	    
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about_activity);
 
