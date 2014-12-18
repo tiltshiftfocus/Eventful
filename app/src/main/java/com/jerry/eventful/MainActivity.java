@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,15 +44,12 @@ import com.melnykov.fab.FloatingActionButton;
 public class MainActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
-    private float mToolbarHeight;
 
     final private int EDIT_EVENT_REQUEST = 0;
     final private int SETTINGS_REQUEST = 1;
-    private String PACKAGE_NAME;
 
     private String filterText = "";
 
-    private EditText searchBox;
     private ListView eventsLV;
 
     private EventsAdapter adapEvents;
@@ -106,16 +102,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onSupportContentChanged() {
         super.onSupportContentChanged();
-
         View empty = findViewById(R.id.emptyList);
         ListView list = (ListView) findViewById(R.id.eventsList);
         list.setEmptyView(empty);
-
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PACKAGE_NAME = this.getPackageName();
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         if (pref.getBoolean("darktheme", false) == true) {
