@@ -127,6 +127,7 @@ public class MainActivity extends ActionBarActivity {
         eventsList = new ArrayList<Eventful>();
 
         eventsLV = (ListView) findViewById(R.id.eventsList);
+        eventsLV.setFastScrollEnabled(true);
         eventsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
